@@ -1,0 +1,13 @@
+# Caddy gets and renews a TLS certificate automatically.
+# Replace docs.example.com with your own domain pointed at this server.
+docs.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8080
+	# Large uploads (images / video for notes)
+	request_body {
+		max_size 60MB
+	}
+	log {
+		output discard
+	}
+}

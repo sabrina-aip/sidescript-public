@@ -1,0 +1,3729 @@
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/GeistVF.woff') format('woff');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --page: #ffffff;
+  --text: #1c1f26;
+  --muted: #6b7280;
+  --border: #e3e5ea;
+  --border-strong: #cfd3da;
+  --accent: #4f46e5;
+  --accent-fg: #ffffff;
+  --accent-soft: #eef0ff;
+  --danger: #dc2626;
+  --ok: #15803d;
+  --warn: #b45309;
+  --comment-bg: rgba(250, 204, 21, 0.28);
+  --comment-line: #eab308;
+  --comment-active: rgba(250, 204, 21, 0.6);
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.16);
+  --radius: 8px;
+  --font: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Script text: Inconsolata (bundled with the app, see editor/fonts.ts). */
+  --doc-font: 'Inconsolata Variable', Inconsolata, ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+/* Themes (per person, Settings): data-theme="light" | "dark" | "sepia" on <html>; without it
+   ("Match system") the device's light/dark setting decides. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #111318;
+    --surface: #1a1d24;
+    --surface-2: #20242c;
+    --page: #1d2027;
+    --text: #e7e9ee;
+    --muted: #9aa1ad;
+    --border: #2b2f38;
+    --border-strong: #3a3f4a;
+    --accent: #818cf8;
+    --accent-fg: #0f1020;
+    --accent-soft: #272a45;
+    --danger: #f87171;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --comment-bg: rgba(250, 204, 21, 0.18);
+    --comment-active: rgba(250, 204, 21, 0.4);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+    --section-bg: #343b47;
+    --section-fg: #e3e8ef;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg: #111318;
+  --surface: #1a1d24;
+  --surface-2: #20242c;
+  --page: #1d2027;
+  --text: #e7e9ee;
+  --muted: #9aa1ad;
+  --border: #2b2f38;
+  --border-strong: #3a3f4a;
+  --accent: #818cf8;
+  --accent-fg: #0f1020;
+  --accent-soft: #272a45;
+  --danger: #f87171;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --comment-bg: rgba(250, 204, 21, 0.18);
+  --comment-active: rgba(250, 204, 21, 0.4);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --section-bg: #343b47;
+  --section-fg: #e3e8ef;
+  color-scheme: dark;
+}
+/* Sepia (dyslexia-friendly): the whole app is warm, but in two clearly different tones. The
+   controls around the script are a deeper tan with dark, high-contrast text; the page itself is
+   light cream paper with near-black ink (about 15:1), which lowers glare. The script text also
+   gets a little extra letter and word spacing. */
+:root[data-theme='sepia'] {
+  --bg: #e3d5b8;
+  --surface: #ede2c9;
+  --surface-2: #e7dabd;
+  --page: #fbf5e6;
+  --text: #1f1810;
+  --muted: #5f4f38;
+  --border: #d3c19c;
+  --border-strong: #bfa77a;
+  --accent: #8f3d12;
+  --accent-fg: #fff8ec;
+  --accent-soft: #f0d9bd;
+  --danger: #a3271a;
+  --ok: #3f6b1f;
+  --warn: #8a5c0c;
+  --comment-bg: rgba(214, 160, 40, 0.26);
+  --comment-line: #c08a1e;
+  --comment-active: rgba(214, 160, 40, 0.5);
+  --shadow: 0 1px 2px rgba(70, 45, 10, 0.1), 0 1px 3px rgba(70, 45, 10, 0.12);
+  --shadow-lg: 0 12px 32px rgba(70, 45, 10, 0.22);
+  --section-bg: #ece2cc;
+  --section-fg: #241c14;
+  --table-line: #e3d7bf;
+  color-scheme: light;
+}
+:root[data-theme='sepia'] .page {
+  color: #241c14;
+}
+:root[data-theme='sepia'] .doc-body {
+  letter-spacing: 0.01em;
+  word-spacing: 0.08em;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+/* No double-tap zoom on phones (double-tap still selects a word); pinch zoom still works. */
+html {
+  touch-action: manipulation;
+}
+body {
+  font: 14px/1.45 var(--font);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+input,
+select,
+textarea {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 6px 8px;
+  min-width: 0;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+input[type='color'] {
+  padding: 2px;
+  width: 36px;
+  height: 32px;
+  cursor: pointer;
+}
+input[type='checkbox'] {
+  accent-color: var(--accent);
+}
+a {
+  color: var(--accent);
+}
+kbd {
+  font: 11px var(--font);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 0 4px;
+  color: var(--muted);
+}
+code {
+  font-size: 0.92em;
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 12px;
+}
+.center-screen {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  text-align: center;
+}
+.error-text {
+  color: var(--danger);
+  font-size: 13px;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------- buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+.btn.primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background: var(--accent);
+}
+.btn.small {
+  padding: 3px 8px;
+  font-size: 12px;
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--muted);
+  flex: none;
+}
+.icon-btn:hover:not(:disabled),
+.icon-btn.on {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.icon-btn.danger:hover {
+  color: var(--danger);
+}
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.link-btn:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.pill.warn {
+  color: var(--warn);
+}
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 600;
+  flex: none;
+  border: 2px solid var(--surface);
+}
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex: none;
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 650;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+}
+
+/* ---------------------------------------------------------------- menus & modals */
+.menu-wrap {
+  position: relative;
+}
+.menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: none;
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--muted);
+}
+.menu-trigger:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 50;
+  min-width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+}
+.menu.right {
+  right: 0;
+}
+.menu.left {
+  left: 0;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.menu-item:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+.menu-item:disabled {
+  cursor: default;
+  opacity: 0.8;
+}
+.menu-item.danger {
+  color: var(--danger);
+}
+.menu-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  color: var(--muted);
+}
+.menu-label {
+  flex: 1;
+}
+.menu-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+.menu-sep {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(10, 12, 18, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.modal {
+  background: var(--surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  width: min(520px, 100%);
+  max-height: calc(100vh - 32px);
+  display: flex;
+  flex-direction: column;
+}
+.modal.wide {
+  width: min(860px, 100%);
+}
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 6px 20px;
+}
+.modal-head h2 {
+  font-size: 17px;
+  margin: 0;
+}
+.modal-body {
+  padding: 8px 20px 16px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.modal-foot input {
+  flex: 1;
+  min-width: 160px;
+}
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+.form-grid {
+  display: grid;
+  gap: 10px;
+}
+.form-grid label,
+label.block {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+.form-grid .btn {
+  justify-self: start;
+}
+.form-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.form-row input {
+  flex: 1;
+  min-width: 120px;
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.toasts {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 8px;
+  z-index: 200;
+  pointer-events: none;
+}
+.toast {
+  background: #1f2330;
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  max-width: 90vw;
+}
+.toast.error {
+  background: #b91c1c;
+}
+.toast-action {
+  pointer-events: auto;
+  margin-left: 14px;
+  border: 0;
+  background: none;
+  color: #a5b4fc;
+  font: 600 13px var(--font);
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.toast-action:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+/* Confirmation bubble anchored to the button that asked (components/confirmAt.ts). */
+.confirm-pop {
+  position: fixed;
+  z-index: 300;
+  width: max-content;
+  max-width: min(340px, calc(100vw - 16px));
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+  padding: 12px 14px;
+  font: 13px/1.45 var(--font);
+  animation: confirm-in 0.12s ease-out;
+}
+@keyframes confirm-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--from-y, -4px));
+  }
+}
+.confirm-pop[data-side='above'] {
+  --from-y: 4px;
+}
+/* Arrow pointing at the button. */
+.confirm-pop[data-side='below']::before,
+.confirm-pop[data-side='above']::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--arrow-x, 50%) - 6px);
+  width: 10px;
+  height: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transform: rotate(45deg);
+}
+.confirm-pop[data-side='below']::before {
+  top: -6px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.confirm-pop[data-side='above']::before {
+  bottom: -6px;
+  border-left: 0;
+  border-top: 0;
+}
+.confirm-title {
+  display: block;
+  margin-bottom: 4px;
+}
+.confirm-pop p {
+  margin: 0 0 10px;
+  white-space: pre-line;
+}
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.btn.danger-fill {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+.btn.danger-fill:hover:not(:disabled) {
+  background: var(--danger);
+  filter: brightness(1.08);
+}
+
+/* ---------------------------------------------------------------- auth */
+.auth-screen {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.auth-card {
+  width: min(380px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  display: grid;
+  gap: 12px;
+}
+.auth-card h1 {
+  margin: 8px 0 0;
+  font-size: 22px;
+}
+.auth-card p {
+  margin: 0;
+}
+.auth-card label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+}
+.auth-card .btn {
+  justify-content: center;
+  padding: 9px;
+}
+
+/* ---------------------------------------------------------------- home */
+.home {
+  min-height: 100%;
+}
+.home-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.search {
+  flex: 1;
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0 14px;
+  color: var(--muted);
+}
+.search input {
+  border: 0;
+  background: none;
+  flex: 1;
+  padding: 8px 0;
+  outline: none;
+}
+.home-main {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+.home-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.tabs button {
+  border: 0;
+  background: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.tabs button.active {
+  color: var(--text);
+  border-color: var(--accent);
+  font-weight: 550;
+}
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.doc-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.doc-open {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 24px 1fr auto 100px;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  border: 0;
+  background: none;
+  padding: 12px 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  min-width: 0;
+}
+.doc-open:hover {
+  background: var(--surface);
+}
+.doc-icon {
+  color: var(--accent);
+}
+.doc-title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.doc-time {
+  text-align: right;
+}
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  padding: 48px 0;
+}
+.user-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.user-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-list li > span:nth-child(2) {
+  flex: 1;
+}
+.row-actions {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------- editor chrome */
+.editor-app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* The same colour as the title area and view bar, so the toolbar pill sits on one surface. */
+  background: var(--surface);
+}
+.ed-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: var(--surface);
+}
+.ed-titlebox {
+  flex: 1;
+  min-width: 0;
+}
+.ed-title {
+  border: 1px solid transparent;
+  background: none;
+  font-size: 18px;
+  font-weight: 550;
+  padding: 2px 6px;
+  width: min(100%, 560px);
+}
+.ed-title:hover:not(:read-only) {
+  border-color: var(--border-strong);
+}
+.ed-sub {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding-left: 7px;
+}
+.save-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.save-badge.saved {
+  color: var(--ok);
+}
+.save-badge.offline,
+.save-badge.denied {
+  color: var(--warn);
+}
+.ed-top-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.presence {
+  display: flex;
+}
+.presence .avatar + .avatar {
+  margin-left: -6px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+  padding: 4px 12px;
+  margin: 0 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+}
+.tb-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text);
+}
+.tb-btn:hover:not(:disabled) {
+  background: var(--border);
+}
+.tb-btn.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.tb-btn:disabled {
+  opacity: 0.35;
+}
+.tb-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border-strong);
+  margin: 0 6px;
+}
+.tb-size {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+.tb-size .tb-btn {
+  width: 24px;
+}
+.tb-size-input {
+  width: 42px;
+  height: 26px;
+  padding: 0 4px;
+  text-align: center;
+  font-size: 13px;
+  border-color: var(--border-strong);
+}
+.tb-size-input::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+.tb-font {
+  width: 178px;
+}
+.tb-select {
+  border: 0;
+  background: none;
+  padding: 4px;
+}
+.tb-highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 13px;
+  padding: 2px 4px;
+}
+
+/* the colour key */
+.layerbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+  flex: none;
+}
+.seg button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: none;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+}
+.seg button + button {
+  border-left: 1px solid var(--border-strong);
+}
+.seg button.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 550;
+}
+.layer-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.layer-chips.dim {
+  opacity: 0.55;
+}
+.chip {
+  --chip: #888;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  border-radius: 99px;
+  padding: 3px 10px 3px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: background 0.12s;
+}
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--chip);
+}
+.chip.on {
+  color: var(--text);
+  border-color: var(--chip);
+  background: color-mix(in srgb, var(--chip) 14%, var(--surface));
+}
+.chip.on .chip-dot {
+  background: var(--chip);
+}
+.chip.comments {
+  --chip: #eab308;
+}
+.chip-count {
+  font-size: 11px;
+  background: var(--surface-2);
+  border-radius: 99px;
+  padding: 0 6px;
+  color: var(--muted);
+}
+.layer-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ---------------------------------------------------------------- page + document */
+.ed-main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.ed-scroll {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  padding: 24px 16px 80px;
+}
+.page {
+  margin: 0 auto;
+  background: var(--page);
+  box-sizing: border-box;
+}
+/* Paged: a sheet with the document's real size and margins (set inline). */
+.page.paged {
+  box-shadow: var(--shadow);
+  outline: 1px solid var(--border);
+  flex: none;
+}
+.ed-scroll.paged {
+  overflow-x: auto;
+}
+/* Pageless: one continuous surface, text kept to a comfortable line length. */
+.ed-scroll.pageless {
+  background: var(--page);
+}
+/* Pageless uses the full width of the window. */
+.page.pageless {
+  max-width: none;
+  min-height: 100%;
+  /* Left/right come from the document's Margins setting (set inline as --pageless-l/r). */
+  padding: 40px var(--pageless-r, 48px) 120px var(--pageless-l, 48px);
+}
+.doc-body {
+  outline: none;
+  font: var(--doc-size, 11pt) / 1 var(--doc-font);
+  word-wrap: break-word;
+}
+.page.pageless .doc-body {
+  min-height: 60vh;
+}
+/* Gap between pages: drawn over the sheet, extends past its edges. */
+.pb-spacer {
+  position: relative;
+  user-select: none;
+  pointer-events: none;
+}
+.pb-band {
+  position: absolute;
+  background: var(--bg);
+  box-shadow: inset 0 7px 6px -6px rgba(16, 24, 40, 0.18), inset 0 -7px 6px -6px rgba(16, 24, 40, 0.18);
+}
+.doc-body.preview {
+  min-height: 0;
+}
+/* Blocks only use bottom margins (space above headings is padding), so spacing
+   never collapses differently when a page break is inserted between blocks. */
+.doc-body > * {
+  margin-top: 0;
+}
+.doc-body > :first-child {
+  padding-top: 0;
+}
+.doc-body h1 {
+  font-size: 1.9em;
+  line-height: 1.25;
+  margin: 0 0 var(--space-after, 0.4em);
+  padding-top: 0.6em;
+}
+.doc-body h2 {
+  font-size: 1.45em;
+  line-height: 1.3;
+  margin: 0 0 var(--space-after, 0.4em);
+  padding-top: 0.5em;
+}
+.doc-body h3 {
+  font-size: 1.2em;
+  margin: 0 0 var(--space-after, 0.3em);
+  padding-top: 0.4em;
+}
+.doc-body p,
+.doc-body ul,
+.doc-body ol,
+.doc-body pre {
+  /* No space between paragraphs by default; --space-after is set per paragraph by the
+     Spacing menu (Small / Large). */
+  margin: 0 0 var(--space-after, 0);
+}
+.doc-body li > p {
+  margin: 0 0 0.2em;
+}
+.doc-body blockquote {
+  border-left: 3px solid var(--border-strong);
+  margin: 0 0 0.8em;
+  padding-left: 14px;
+  color: var(--muted);
+}
+.doc-body pre {
+  background: var(--surface-2);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+}
+.doc-body code {
+  background: var(--surface-2);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.doc-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+.doc-body img.ProseMirror-selectednode {
+  outline: 3px solid var(--accent);
+}
+.doc-body hr {
+  border: 0;
+  border-top: 1px solid var(--border-strong);
+  margin: 0.7em 0 1.5em;
+}
+.doc-body a {
+  color: var(--accent);
+}
+.doc-body mark.ann {
+  background: transparent;
+  color: inherit;
+  border-radius: 2px;
+  transition: background-color 0.12s;
+}
+/* The placeholder decoration lands on the section-head wrapper, so the text is set here. */
+/* Pinned to the title's own line (a float would drop below the empty line's hidden break). */
+.doc-body .section-head > .section-title {
+  position: relative;
+}
+.doc-body[contenteditable='true'] .section-head.is-empty > .section-title::before {
+  content: 'Section title';
+  color: var(--muted);
+  opacity: 0.7;
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.doc-body .beat-body > p.is-empty:only-child::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  opacity: 0.7;
+  float: left;
+  height: 0;
+  pointer-events: none;
+  font-style: normal;
+}
+/* Focus view: un-highlighted text fades back; visible layers stay crisp (rules injected per layer). */
+.focus-mode .doc-body {
+  color: color-mix(in srgb, var(--text) 30%, transparent);
+}
+.focus-mode .doc-body img {
+  opacity: 0.35;
+}
+
+/* collaborator carets */
+.collaboration-carets__caret {
+  border-left: 1px solid;
+  border-right: 1px solid;
+  margin-left: -1px;
+  margin-right: -1px;
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+}
+.collaboration-carets__label {
+  border-radius: 3px 3px 3px 0;
+  color: #fff;
+  font: 600 11px/1 var(--font);
+  left: -1px;
+  padding: 2px 5px;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* selection bubble */
+.bubble {
+  position: absolute;
+  z-index: 20;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  border-radius: 99px;
+  padding: 4px 6px;
+}
+.bubble-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  cursor: pointer;
+}
+.bubble-swatch:hover {
+  transform: scale(1.15);
+}
+.bubble-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+.page-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.page-controls select {
+  padding: 2px 4px;
+  font-size: 12px;
+}
+.seg.small button {
+  padding: 2px 8px;
+}
+.seg button:disabled {
+  cursor: default;
+}
+.ed-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 3px 16px;
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/* ---------------------------------------------------------------- script: sections & beats */
+:root {
+  --section-bg: #d5dae2; /* rgb(213, 218, 226): a quiet slate bar */
+  --section-fg: #1f2733;
+}
+.doc-body .section {
+  margin: 0 0 1.4em;
+}
+/* Section header: collapse arrow + title on one centred line. The title starts where
+   beat text starts (document view) / where the Visual column's content starts (table). */
+.section-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 0.7em;
+  padding-left: 15px;
+}
+.section-head > .section-title {
+  flex: 1;
+  min-width: 0;
+}
+.section-head > .beat-toggle {
+  position: static;
+  flex: none;
+  margin-left: -26px;
+}
+.doc-body h2.section-title {
+  font: 700 1.3em/1.3 var(--doc-font);
+  letter-spacing: -0.01em;
+  margin: 0;
+  padding: 0;
+}
+.section-count {
+  font: 12px var(--font);
+  color: var(--muted);
+  user-select: none;
+}
+.layout-table .section-count {
+  color: inherit;
+  opacity: 0.75;
+}
+.section.collapsed > .beat,
+.section.collapsed > .pb-spacer {
+  display: none;
+}
+
+.beat {
+  --vcolor: transparent;
+  position: relative;
+  margin: 0 0 1.1em;
+  padding-left: 12px;
+  border-left: 3px solid var(--vcolor);
+  /* Off-screen beats skip layout and painting: long scripts stay fast. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 140px;
+}
+.page.paged .beat {
+  content-visibility: visible;
+}
+.beat-body > :last-child {
+  margin-bottom: 0;
+}
+.beat-toggle {
+  position: absolute;
+  z-index: 2; /* above table cells, which are positioned too */
+  left: -30px;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: transform 0.15s, opacity 0.15s;
+}
+.beat-toggle:hover {
+  background: var(--surface-2);
+}
+.section-head:hover > .beat-toggle,
+.section.collapsed > .section-head > .beat-toggle,
+.beat-toggle:focus-visible {
+  opacity: 1;
+}
+.section.collapsed > .section-head > .beat-toggle {
+  transform: rotate(-90deg);
+}
+.beat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 22px;
+  margin-bottom: 2px;
+  font: 12px/1.4 var(--font);
+  user-select: none;
+}
+.cell {
+  transition: opacity 0.12s;
+}
+/* Empty fields stay out of the way until you point at the beat. */
+.layout-document .cell.empty {
+  opacity: 0;
+}
+.layout-document .beat:hover .cell.empty,
+.layout-document .beat:focus-within .cell.empty {
+  opacity: 0.6;
+}
+.doc-body[contenteditable='false'] .cell.empty {
+  display: none;
+}
+.f-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: 99px;
+  padding: 0 10px;
+  height: 20px;
+  font: 500 12px var(--font);
+  cursor: pointer;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.f-chip.unset {
+  background: transparent;
+  border: 1px dashed var(--border-strong);
+}
+.f-chip:disabled {
+  cursor: default;
+  opacity: 1;
+}
+.f-input {
+  border: 0;
+  background: transparent;
+  width: 7ch;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font: 12px ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--muted);
+}
+.f-input:hover,
+.f-input:focus {
+  background: var(--surface-2);
+  outline: none;
+}
+/* Document view: only the beat you're working in shows its chips and fields at full strength;
+   the rest are quieted (opacity only, so nothing moves). Also full for a beat whose field
+   you're editing or that is ticked for bulk edit. */
+.layout-document .beat {
+  transition: border-left-color 0.15s;
+}
+.layout-document .beat > .beat-meta {
+  transition: opacity 0.15s;
+}
+/* Other beats: their data and coloured edge fade to 20%; the dialogue stays at full strength. */
+.layout-document .beat:not(.beat-current):not(:focus-within):not(.selected) {
+  border-left-color: color-mix(in srgb, var(--vcolor) 20%, transparent);
+}
+.layout-document .beat:not(.beat-current):not(:focus-within):not(.selected) > .beat-meta {
+  opacity: 0.2;
+}
+/* Document view: the header is a fixed grid (columns set per field list in the beat view):
+   visual chip + note fill the left, then each text field (scene) and chip (status) sit in
+   fixed-width columns on the right. Nothing moves when a field is empty, filled or hovered. */
+.layout-document .beat-meta {
+  display: grid;
+  grid-template-columns: var(--meta-cols, minmax(0, 1fr));
+  column-gap: 10px;
+  align-items: center;
+  /* Breathing room between a beat's data and its dialogue, about one line (like the gap between beats). */
+  margin-bottom: 14px;
+}
+.layout-document .f-text .f-input {
+  width: 100%;
+  text-align: right;
+}
+.layout-document .f-select {
+  justify-self: end;
+}
+.f-visual {
+  min-width: 0;
+}
+.v-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.v-count {
+  color: var(--muted);
+  font-size: 11px;
+}
+.v-desc {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  resize: none;
+  overflow: hidden;
+  padding: 2px 0;
+  font: 13px/1.4 var(--font);
+  color: var(--text);
+}
+.v-desc:focus {
+  outline: none;
+}
+.v-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.v-img {
+  position: relative;
+  flex: 1 1 100%;
+}
+.v-img img {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 4px;
+  background: var(--surface-2);
+}
+.v-img-x {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+}
+.v-img:hover .v-img-x {
+  opacity: 1;
+}
+/* The image button only appears while you're editing the visual note. */
+.v-add {
+  display: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  padding: 1px 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex: none;
+}
+.f-visual:focus-within .v-add {
+  display: inline-block;
+}
+/* Document view: visual is the chip plus a one-line note that always keeps its space. */
+.layout-document .f-visual {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.layout-document .v-head {
+  flex: none;
+}
+.layout-document .v-desc {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  height: 20px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--muted);
+  font-size: 12px;
+}
+/* The "Visual notes" hint only shows on the beat you're pointing at; its space never changes. */
+.layout-document .v-desc::placeholder {
+  color: transparent;
+}
+.layout-document .beat:hover .v-desc::placeholder,
+.layout-document .v-desc:focus::placeholder {
+  color: var(--muted);
+}
+.layout-document .v-images {
+  display: none;
+}
+
+/* Table view: the same beats laid out as rows. */
+.page.layout-table {
+  max-width: none;
+  padding: 0 0 120px;
+}
+/* Pageless table: the Margins setting insets it from the window edges, less the scroller's own gutter. */
+.page.pageless.layout-table {
+  padding: 0 max(0px, calc(var(--pageless-r, 48px) - 16px)) 120px max(0px, calc(var(--pageless-l, 48px) - 16px));
+}
+/* The table is a rounded card with hairline lines, lighter than lines elsewhere in the app. */
+:root {
+  --table-line: color-mix(in srgb, var(--border) 70%, var(--page));
+  --table-radius: 12px;
+}
+.table-head {
+  /* Same side borders as the rows below, so header and row columns share exact edges. */
+  /* The border keeps its width (columns line up with the rows) but is drawn by ::after. */
+  border: 1px solid transparent;
+  position: sticky;
+  top: -24px;
+  z-index: 6;
+  display: grid;
+  grid-template-columns: var(--beat-cols);
+  /* Square and opaque, so rows scrolling underneath never peek out past the rounded corners… */
+  background: var(--page);
+  color: var(--muted);
+  font: 600 12.5px var(--font);
+  letter-spacing: 0.01em;
+}
+/* …and the rounded, tinted header is drawn just behind the labels. */
+.table-head::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border: 1px solid var(--table-line);
+  border-radius: var(--table-radius) var(--table-radius) 0 0;
+  background: var(--surface-2);
+  pointer-events: none;
+}
+/* Column labels (direct children only: the resize handles inside them are spans too). */
+.table-head > span {
+  position: relative;
+  padding: 10px 12px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: visible;
+}
+/* Dialogue-only scripts: no empty header row on each beat. */
+.layout-document .beat-meta.no-fields {
+  min-height: 0;
+  margin: 0;
+}
+.lb-hint {
+  margin: -4px 0 16px;
+}
+/* Column names: click to rename, right in the header row. */
+.th-name {
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  padding: 2px 4px;
+  margin: -3px -5px;
+  width: calc(100% - 18px);
+  min-width: 0;
+  text-overflow: ellipsis;
+  cursor: text;
+}
+.th-name:hover {
+  border-color: var(--table-line);
+  background: var(--page);
+}
+.th-name:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--page);
+  color: var(--text);
+}
+.th-menu {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  opacity: 0;
+  z-index: 3;
+}
+.table-head > span:hover .th-menu,
+.th-menu:focus-within {
+  opacity: 1;
+}
+.th-menu .menu-trigger {
+  padding: 2px;
+}
+.th-menu .menu {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+/* Column edges you can drag. */
+.col-resize {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 11px;
+  z-index: 2;
+  cursor: col-resize;
+  touch-action: none;
+}
+.col-resize.right {
+  right: -5px; /* puts the drawn line on the cell's 1px right border */
+}
+.col-resize.left {
+  left: -6px;
+}
+.col-resize::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 5px;
+  width: 1px;
+  background: var(--table-line);
+}
+.col-resize:hover::after,
+.col-resizing .col-resize::after {
+  background: var(--accent);
+  width: 2px;
+  left: 4px;
+}
+body.col-resizing,
+body.col-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+.layout-table .doc-body {
+  border: 1px solid var(--table-line);
+  border-top: 0;
+  border-radius: 0 0 var(--table-radius) var(--table-radius);
+  overflow: clip; /* round off the last row and section bars */
+}
+.page.layout-table .doc-body {
+  min-height: 0; /* the card ends at the last row */
+}
+/* Section bars sit flush against the rows: no divider under a section's last row (the next
+   bar or the card's edge closes it) and none under the bar itself. */
+.layout-table .section > .beat:last-child,
+.layout-table .section > .section-head {
+  border-bottom: 0;
+}
+/* Row heights land on fractional pixels, which can leave a hairline seam where a tinted row
+   meets the next bar. Each later section overlaps the row above by 1px to close it. */
+.layout-table .section + .section {
+  margin-top: -1px;
+  position: relative;
+}
+.layout-table .section {
+  margin: 0;
+}
+.layout-table .section-head {
+  margin: 0;
+  /* 12px = the Visual cell's 4px colour edge + 8px, so the title lines up with the chips */
+  padding: 8px 12px 8px 12px;
+  background: var(--section-bg);
+  color: var(--section-fg);
+  border-bottom: 1px solid var(--table-line);
+}
+.layout-table .section-head > .beat-toggle {
+  margin-left: 0;
+  opacity: 1;
+  color: inherit;
+}
+.layout-table h2.section-title {
+  font-size: 15px;
+}
+
+.layout-table .beat {
+  display: grid;
+  grid-template-columns: var(--beat-cols);
+  margin: 0;
+  padding: 0;
+  border-left: 0;
+  border-bottom: 1px solid var(--table-line);
+  contain-intrinsic-size: auto 90px;
+}
+.layout-table .beat-meta {
+  display: contents;
+}
+.layout-table .beat .cell,
+.layout-table .beat-body {
+  grid-column: var(--col);
+  grid-row: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  border-right: 1px solid var(--table-line);
+}
+.layout-table .beat .cell:last-of-type {
+  border-right: 0;
+}
+.layout-table .f-visual {
+  padding-left: 34px !important;
+  border-left: 4px solid var(--vcolor) !important;
+  /* Tint the whole Visual cell with its chip colour. */
+  background: color-mix(in srgb, var(--vcolor) 16%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.layout-table .v-count {
+  display: none;
+}
+/* Keep the table calm: empty fields and hints only appear on the row you're on. */
+.layout-table .beat:not(:hover):not(:focus-within) .cell.empty .f-chip,
+.layout-table .beat:not(:hover):not(:focus-within) .f-input:placeholder-shown {
+  opacity: 0;
+}
+.layout-table .v-desc::placeholder {
+  color: transparent;
+}
+.layout-table .beat:hover .v-desc::placeholder,
+.layout-table .v-desc:focus::placeholder {
+  color: var(--muted);
+}
+.layout-table .f-visual {
+  position: relative;
+  padding-bottom: 24px !important;
+}
+.layout-table .v-add {
+  position: absolute;
+  left: 34px;
+  bottom: 3px;
+}
+.layout-table .v-img img {
+  max-height: 170px;
+}
+
+.layout-table .f-input {
+  width: 100%;
+}
+/* A chip never spills out of a narrow column; long labels end in "…". */
+.layout-table .f-chip {
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+
+/* Script view: only the words. */
+.script-mode .beat-meta,
+.script-mode .section-count,
+.script-mode .beat-toggle {
+  display: none !important;
+}
+/* No beat edges in Script view, so section titles line up flush with the text too. */
+.script-mode .section-head {
+  padding-left: 0;
+}
+.script-mode .beat {
+  border-left: 0;
+  padding-left: 0;
+  margin-bottom: 0.8em;
+}
+
+/* ---------------------------------------------------------------- beat selection & bulk bar */
+.beat-select {
+  position: absolute;
+  z-index: 2;
+  left: -30px;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+.beat:hover > .beat-meta > .beat-select,
+.has-selection .beat-select,
+.beat-select:focus-visible {
+  opacity: 1;
+}
+.layout-table .beat-select {
+  left: 8px;
+  top: 10px;
+}
+.beat.selected {
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  box-shadow: -8px 0 0 color-mix(in srgb, var(--accent) 9%, transparent);
+}
+.layout-table .beat.selected {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.script-mode .beat-select {
+  display: none;
+}
+.bulk-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  max-width: calc(100vw - 32px);
+  padding: 8px 10px 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+}
+.bulk-chip {
+  height: 26px;
+  font-size: 13px;
+}
+.bulk-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.bulk-text input {
+  width: 90px;
+  padding: 3px 6px;
+  font: 13px ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.ol-beat.picked {
+  box-shadow: inset 3px 0 0 var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+/* ---------------------------------------------------------------- labels dialog */
+.lb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px 28px;
+}
+.lb-grid > section {
+  min-width: 0;
+}
+.lb-grid h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 650;
+}
+.lb-gap {
+  margin-top: 18px !important;
+}
+.lb-list {
+  list-style: none;
+  margin: 0 0 6px;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.lb-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-width: 0;
+}
+/* Reorder grip: drag it, or focus it and press ↑/↓. */
+.lb-grip {
+  width: 18px;
+  height: 24px;
+  margin-right: -4px;
+  cursor: grab;
+  color: var(--muted);
+  opacity: 0.45;
+}
+.lb-list li:hover .lb-grip,
+.lb-grip:focus-visible {
+  opacity: 1;
+}
+.lb-list li.drop-above::before,
+.lb-list li.drop-below::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.lb-list li.drop-above::before {
+  top: -4px;
+}
+.lb-list li.drop-below::after {
+  bottom: -4px;
+}
+.lb-list input[type='color'],
+.lb-section input[type='color'] {
+  width: 30px;
+  height: 26px;
+  padding: 1px;
+  flex: none;
+}
+.lb-name {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+}
+.lb-chip {
+  display: inline-flex;
+  border-radius: 99px;
+  padding: 2px 12px;
+}
+.lb-chip input {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 500 13px var(--font);
+  padding: 0;
+  min-width: 4ch;
+}
+.lb-chip input:focus {
+  outline: none;
+  text-decoration: underline;
+}
+.lb-remove {
+  width: 24px;
+  height: 24px;
+  opacity: 0.35;
+}
+.lb-list li:hover .lb-remove,
+.lb-remove:focus-visible {
+  opacity: 1;
+}
+.lb-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lb-preview {
+  flex: 1;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: 650;
+}
+
+/* ---------------------------------------------------------------- outline drawer */
+.btn.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.outline {
+  width: 290px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  min-height: 0;
+  font-size: 13px;
+}
+.outline-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.outline-head .muted {
+  flex: 1;
+}
+.outline-list {
+  flex: 1;
+  overflow: auto;
+  padding: 6px 4px 24px;
+}
+.outline-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+}
+.ol-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  min-height: 28px;
+}
+.ol-row:hover {
+  background: var(--surface-2);
+}
+.ol-row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.ol-row.dragging {
+  opacity: 0.4;
+}
+.ol-grip {
+  color: var(--muted);
+  opacity: 0;
+  flex: none;
+  cursor: grab;
+}
+.ol-row:hover .ol-grip {
+  opacity: 0.7;
+}
+.ol-sec-row {
+  font-weight: 600;
+  margin-top: 4px;
+}
+.ol-fold {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform 0.15s;
+  flex: none;
+}
+.ol-fold.folded {
+  transform: rotate(-90deg);
+}
+.ol-sec-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ol-count {
+  font: 500 11px var(--font);
+  color: var(--muted);
+}
+.ol-add {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+}
+.ol-row:hover .ol-add,
+.ol-add:focus-visible {
+  opacity: 1;
+}
+.ol-add:hover {
+  background: var(--border);
+}
+.ol-beat {
+  padding-left: 14px;
+}
+.ol-vbar {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  background: var(--v);
+  flex: none;
+}
+.ol-scene {
+  font: 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--muted);
+  flex: none;
+}
+.ol-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ol-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.ol-beat.current {
+  background: var(--accent-soft);
+}
+.drop-before::before,
+.drop-after::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+.drop-before::before {
+  top: -1px;
+}
+.drop-after::after {
+  bottom: -1px;
+}
+.drop-into {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+@media (max-width: 1100px) {
+  .outline {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 30;
+    box-shadow: var(--shadow-lg);
+    width: min(320px, 88vw);
+  }
+}
+
+/* ---------------------------------------------------------------- side panel */
+.side-panel {
+  width: 360px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  min-height: 0;
+}
+.panel-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding: 0 4px 0 8px;
+}
+.panel-tabs button[role='tab'] {
+  border: 0;
+  background: none;
+  padding: 10px 10px;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.panel-tabs button.active {
+  color: var(--text);
+  border-color: var(--accent);
+  font-weight: 550;
+}
+.panel-tabs .icon-btn {
+  margin-left: auto;
+}
+.panel-body {
+  overflow: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.panel-tools select {
+  border: 0;
+  background: none;
+  padding: 2px;
+  color: var(--text);
+}
+.panel-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 24px 12px;
+}
+.panel-empty p {
+  margin: 0 0 6px;
+}
+.note-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.note-group h4 {
+  margin: 4px 0 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-left: 4px solid;
+  padding-left: 8px;
+}
+.note-group.detached {
+  border-top: 1px dashed var(--border-strong);
+  padding-top: 8px;
+}
+
+.note-card,
+.thread-card {
+  --cat: #888;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--cat);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.thread-card {
+  --cat: #eab308;
+}
+.note-card.active,
+.thread-card.active {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--cat) 55%, transparent), var(--shadow);
+}
+.thread-card.resolved {
+  opacity: 0.7;
+}
+.note-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.note-cat {
+  border: 0;
+  background: color-mix(in srgb, var(--cat) 16%, transparent);
+  color: var(--text);
+  font-weight: 550;
+  font-size: 12px;
+  border-radius: 99px;
+  padding: 2px 8px;
+}
+.note-quote {
+  text-align: left;
+  border: 0;
+  background: var(--surface-2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font: italic 13px/1.4 var(--doc-font);
+  color: var(--muted);
+  cursor: pointer;
+}
+.detached-q {
+  font-style: normal;
+  font-family: var(--font);
+  cursor: default;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.note-text {
+  resize: vertical;
+  width: 100%;
+  min-height: 52px;
+  font-size: 13px;
+}
+.note-text:read-only {
+  border-color: transparent;
+  background: none;
+  padding: 0;
+  resize: none;
+}
+.note-foot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.note-foot .muted {
+  margin-left: auto;
+}
+.attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.attachments.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.att {
+  position: relative;
+}
+.att img {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+  max-height: 240px;
+  object-fit: cover;
+}
+.att audio,
+.att video {
+  width: 100%;
+  border-radius: 6px;
+}
+/* Link card: title, site · author · year, and a locally stored preview image. */
+.att-link {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px;
+  color: var(--text);
+  text-decoration: none;
+  min-width: 0;
+}
+.att-link:hover {
+  background: var(--surface-2);
+}
+.att-link img {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex: none;
+}
+.att-link-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13px;
+}
+.att-link-text strong,
+.att-link-text span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Video embed: a stored thumbnail; the player only loads when you press play. */
+.att-video {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+  text-align: left;
+}
+.att-video img,
+.att-video-blank {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  opacity: 0.85;
+}
+.att-play {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+.att-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 18px 8px 6px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  color: #fff;
+  font-size: 12px;
+}
+.att-caption .muted {
+  color: rgba(255, 255, 255, 0.7);
+}
+.att-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 6px;
+  display: block;
+}
+.att-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.att-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  opacity: 0;
+}
+.att:hover .att-remove,
+.att-remove:focus {
+  opacity: 1;
+}
+/* ---- annotation states: drafts look unfinished; finished cards are calm and read-only */
+.note-card.draft {
+  border-style: dashed;
+  border-left-style: solid;
+}
+.note-head {
+  justify-content: flex-start;
+}
+.note-time {
+  margin-left: auto;
+}
+.draft-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  border: 1px dashed var(--border-strong);
+  border-radius: 99px;
+  padding: 0 7px;
+}
+.note-read {
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 0 2px;
+}
+.note-read a {
+  color: var(--accent);
+}
+.note-foot.read .muted {
+  margin-left: 0;
+}
+.note-foot.read .menu-trigger {
+  padding: 2px;
+}
+.note-foot .btn.primary {
+  margin-left: 0;
+}
+.note-offer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--surface-2);
+  border-radius: 6px;
+  padding: 4px 4px 4px 8px;
+}
+.note-offer .icon-btn {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+}
+/* Finished cards: link cards become compact rows; images stay short until clicked. */
+.attachments.compact .att-link {
+  padding: 4px 6px;
+  border-color: var(--table-line, var(--border));
+}
+.attachments.compact .att-link img {
+  width: 40px;
+  height: 30px;
+}
+.attachments.compact .att-link-text {
+  font-size: 12.5px;
+  gap: 0;
+}
+button.att-img {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+.attachments.compact .att-img img {
+  max-height: 120px;
+}
+.attachments.compact .att-img.big {
+  cursor: zoom-out;
+}
+.attachments.compact .att-img.big img {
+  max-height: none;
+  object-fit: contain;
+}
+.attachments.compact .att-video img,
+.attachments.compact .att-video-blank {
+  aspect-ratio: 21 / 9;
+}
+.att-more {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.att-more:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+/* Links being fetched, and ones that couldn't be. */
+.att-pending {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  border: 1px dashed var(--border-strong);
+  border-radius: 6px;
+  padding: 7px 8px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.att-pending.failed {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--danger) 35%, var(--border));
+  color: var(--text);
+}
+.att-pending-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.att-pending-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.att-pending-actions .icon-btn {
+  width: 20px;
+  height: 20px;
+}
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex: none;
+}
+/* Reordering attachments while editing. */
+.att-grip {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  opacity: 0;
+  z-index: 1;
+}
+.att:hover .att-grip,
+.att-grip:focus-visible {
+  opacity: 1;
+}
+.att.drop-above::before,
+.att.drop-below::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+.att.drop-above::before {
+  top: -4px;
+}
+.att.drop-below::after {
+  bottom: -4px;
+}
+.msg {
+  display: flex;
+  gap: 8px;
+}
+.msg-head {
+  font-size: 12px;
+}
+.msg-text {
+  white-space: pre-wrap;
+  font-size: 13px;
+}
+.reply input {
+  width: 100%;
+  font-size: 13px;
+}
+
+/* ---------------------------------------------------------------- dialogs */
+.key-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.key-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.key-name {
+  flex: 1;
+  min-width: 140px;
+}
+.key-count {
+  min-width: 110px;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.history {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 12px;
+  min-height: 360px;
+}
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+  max-height: 60vh;
+  border-right: 1px solid var(--border);
+}
+.history-list button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+.history-list button:hover {
+  background: var(--surface-2);
+}
+.history-list button.active {
+  background: var(--accent-soft);
+}
+.history-preview {
+  overflow: auto;
+  max-height: 60vh;
+  padding: 0 8px;
+}
+.export-presets {
+  display: flex;
+  gap: 4px;
+}
+.layer-checks {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 6px;
+  padding: 8px 12px 10px;
+}
+.layer-checks legend {
+  font-size: 12px;
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+/* ---------------------------------------------------------------- responsive */
+@media (max-width: 1100px) {
+  .side-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 30;
+    box-shadow: var(--shadow-lg);
+    width: min(380px, 92vw);
+  }
+}
+@media (max-width: 760px) {
+  .page.pageless {
+    padding: 28px 20px 80px;
+  }
+  .page.pageless.layout-table {
+    padding: 0 0 120px;
+  }
+  .ed-scroll {
+    padding: 8px 0 80px;
+  }
+  .toolbar {
+    border-radius: 10px;
+    margin: 0 8px;
+  }
+  .hide-sm,
+  .presence {
+    display: none;
+  }
+  .doc-open {
+    grid-template-columns: 24px 1fr auto;
+  }
+  .doc-sub {
+    display: none;
+  }
+  .history {
+    grid-template-columns: 1fr;
+  }
+  .history-list {
+    border-right: 0;
+    max-height: 30vh;
+  }
+  .home-top {
+    padding: 10px 16px;
+  }
+}
+
+/* Print the app directly (Ctrl+P is routed to the export dialog, but just in case). */
+@media print {
+  .ed-top,
+  .toolbar,
+  .layerbar,
+  .side-panel,
+  .ed-status,
+  .bubble,
+  .toasts {
+    display: none !important;
+  }
+  .ed-scroll {
+    overflow: visible;
+    padding: 0;
+  }
+  .page {
+    box-shadow: none;
+    border: 0;
+    padding: 0;
+    max-width: none;
+  }
+  .editor-app {
+    height: auto;
+  }
+}
+
+/* ---------------------------------------------------------------- keyboard shortcuts dialog */
+table.shortcuts {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.shortcuts th,
+table.shortcuts td {
+  text-align: left;
+  padding: 6px 8px;
+  vertical-align: middle;
+}
+table.shortcuts thead th {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+table.shortcuts thead th.this-os {
+  color: var(--text);
+}
+table.shortcuts td {
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+table.shortcuts td:nth-child(2),
+table.shortcuts td:nth-child(3),
+table.shortcuts thead th:nth-child(2),
+table.shortcuts thead th:nth-child(3) {
+  width: 30%;
+  padding-right: 16px;
+}
+/* Alternatives wrap between each other, never inside one key combination. */
+table.shortcuts td .kbd-combo {
+  white-space: nowrap;
+  margin: 2px 0;
+}
+table.shortcuts td:not(.this-os):nth-child(n + 2) {
+  opacity: 0.6;
+}
+table.shortcuts .sc-group th {
+  padding-top: 16px;
+  font-size: 12px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.kbd-combo {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 5px;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  font: 500 12px/1.5 var(--font);
+  text-align: center;
+  color: var(--text);
+}
+.kbd-plus,
+.kbd-or {
+  color: var(--muted);
+  font-size: 11px;
+  padding: 0 1px;
+}
+.kbd-word {
+  color: var(--muted);
+  font-size: 12px;
+  padding: 0 2px;
+}
+@media (max-width: 760px) {
+  table.shortcuts td:nth-child(2),
+  table.shortcuts td:nth-child(3),
+  table.shortcuts thead th:nth-child(2),
+  table.shortcuts thead th:nth-child(3) {
+    white-space: normal;
+  }
+}
+
+/* ---------------------------------------------------------------- colour picker (components/ColorPicker.tsx) */
+.cp-trigger {
+  width: 30px;
+  height: 26px;
+  flex: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 0;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 2px var(--surface);
+}
+.cp-trigger:disabled {
+  cursor: default;
+}
+.cp-pop {
+  position: fixed;
+  z-index: 300;
+  width: 236px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+}
+.cp-sv {
+  position: relative;
+  height: 128px;
+  border-radius: 8px;
+  background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, var(--hue));
+  cursor: crosshair;
+  touch-action: none;
+}
+.cp-sv:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.cp-knob {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+.cp-hue {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  height: 12px;
+  border-radius: 99px;
+  border: 0;
+  padding: 0;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  cursor: pointer;
+}
+.cp-hue::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+.cp-hue::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+}
+.cp-hex {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cp-preview {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex: none;
+}
+.cp-hex input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  font: 13px ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.cp-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: -4px;
+}
+.cp-dots {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.cp-dot {
+  aspect-ratio: 1;
+  width: 100%;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+.cp-dots .cp-dot:nth-child(-n + 7) {
+  color: rgba(0, 0, 0, 0.6);
+}
+.cp-dot:hover,
+.cp-dot:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Labels footer: Reset sits on the left, away from Done. */
+.modal-foot .lb-reset {
+  margin-right: auto;
+}
+
+/* ---------------------------------------------------------------- checklists */
+.doc-body ul[data-type='taskList'] {
+  list-style: none;
+  padding-left: 0.2em;
+}
+.doc-body ul[data-type='taskList'] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+}
+.doc-body ul[data-type='taskList'] li > label {
+  flex: none;
+  user-select: none;
+  margin-top: 0.12em;
+}
+.doc-body ul[data-type='taskList'] li > label input {
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.doc-body ul[data-type='taskList'] li > div {
+  flex: 1;
+  min-width: 0;
+}
+.doc-body ul[data-type='taskList'] li[data-checked='true'] > div {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.doc-body ul[data-type='taskList'] ul[data-type='taskList'] {
+  margin: 0.2em 0 0;
+}
+
+/* ---------------------------------------------------------------- annotation conversation */
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.react-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  border-radius: 99px;
+  padding: 0 8px;
+  height: 24px;
+  font: 500 12px var(--font);
+  color: var(--text);
+  cursor: pointer;
+}
+.react-pill.mine {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+.react-pill:disabled {
+  cursor: default;
+}
+.react-pill .emoji,
+.react-choice {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+.react-pop {
+  position: fixed;
+  z-index: 300;
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  box-shadow: var(--shadow-lg);
+}
+.react-choice {
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+.react-choice:hover,
+.react-choice:focus-visible {
+  background: var(--surface-2);
+}
+.note-replies {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+.msg-body {
+  min-width: 0;
+  flex: 1;
+}
+.msg-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.msg-del {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+}
+.msg:hover .msg-del,
+.msg-del:focus-visible {
+  opacity: 0.7;
+}
+.note-foot.read .link-btn {
+  font-weight: 500;
+}
+.foot-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.complete-btn {
+  border-radius: 50%;
+}
+.complete-btn:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.completed-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.completed-by svg {
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- annotation replies */
+.reply-composer {
+  display: grid;
+  gap: 6px;
+}
+.reply-text {
+  min-height: 0;
+  resize: none;
+}
+.reply-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.msg-deleted {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--muted);
+  padding: 2px 0 2px 30px;
+}
+.msg-menu {
+  margin-left: auto;
+  opacity: 0;
+}
+.msg:hover .msg-menu,
+.msg-menu:focus-within {
+  opacity: 1;
+}
+.msg-menu .menu-trigger {
+  padding: 1px;
+}
+.msg-body .attachments {
+  margin-top: 4px;
+}
+div.completed-by {
+  display: flex;
+}
+
+/* Toolbar menus with an icon (e.g. line spacing) use the same colour as the other toolbar icons. */
+.toolbar .menu-trigger {
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------- one font for the whole script
+   (Document settings): chips, visual notes, scene numbers, column headers and section counts use
+   the document font too. Fonts applied to individual text before this setting existed are ignored. */
+.doc-body [data-font] {
+  font-family: inherit !important;
+}
+.beat-meta,
+.f-chip,
+.f-input,
+.v-desc,
+.table-head,
+.section-count {
+  font-family: var(--doc-font);
+}
+
+.font-choices {
+  display: grid;
+  gap: 6px;
+}
+.font-choices > p {
+  margin: 0 0 4px;
+}
+.font-choice {
+  display: grid !important;
+  grid-template-columns: auto 150px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+.font-sample {
+  color: var(--muted);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* One text size for the whole script (Document settings): sizes set on individual text before
+   this setting existed are ignored. Headings keep their relative (em) sizes. */
+.doc-body span[style*='font-size'] {
+  font-size: inherit !important;
+}
+
+.font-size-row {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.font-size-row select {
+  width: auto;
+}
+
+.font-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.font-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.font-row select {
+  width: auto;
+  min-width: 120px;
+}
+.font-preview {
+  margin: 6px 0 0 !important;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--page);
+  color: var(--text);
+  line-height: 1.3;
+  max-height: 8.5em;
+  overflow: hidden;
+}
+
+.size-stepper-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.size-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.size-stepper .tb-btn {
+  width: 28px;
+  height: 28px;
+}
+.size-stepper .tb-size-input {
+  width: 48px;
+  height: 30px;
+}
+.size-stepper .muted {
+  margin-left: 2px;
+}
+
+/* ---------------------------------------------------------------- theme picker */
+.theme-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 8px;
+}
+.theme-option {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px 6px 7px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: 500 12.5px var(--font);
+  cursor: pointer;
+}
+.theme-option:hover {
+  border-color: var(--border-strong);
+}
+.theme-option.on {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.theme-swatch {
+  width: 100%;
+  max-width: 96px;
+  height: 46px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.theme-swatch span {
+  width: 60%;
+  height: 6px;
+  border-radius: 3px;
+  box-shadow: 0 10px 0 0 currentColor, 0 -10px 0 0 currentColor;
+  background: currentColor;
+  opacity: 0.8;
+}
+.theme-swatch.light {
+  background: #ffffff;
+  color: #1c1f26;
+}
+.theme-swatch.dark {
+  background: #1d2027;
+  color: #e7e9ee;
+}
+.theme-swatch.sepia {
+  background: #fbf5e6;
+  color: #241c14;
+}
+.theme-swatch.system {
+  background: linear-gradient(135deg, #ffffff 50%, #1d2027 50%);
+  color: #8a8f99;
+}
+
+/* Dark theme: very dark chips (e.g. Charcoal) would vanish into the background, so they're
+   lifted and outlined. */
+:root[data-theme='dark'] .chip-dark {
+  filter: brightness(1.75);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .chip-dark {
+    filter: brightness(1.75);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  }
+}
+
+/* OpenDyslexic has tall letter shapes that sit low in the small chips; size them to fit. */
+.editor-app[data-doc-font='dyslexic'] .f-chip {
+  font-size: 10.5px;
+  line-height: 1;
+  padding-top: 0;
+  padding-bottom: 2px;
+}
+.editor-app[data-doc-font='dyslexic'] .f-input,
+.editor-app[data-doc-font='dyslexic'] .v-desc {
+  font-size: 11px;
+}
+
+/* Sepia: things that hold script content (annotation and comment cards, the outline's current
+   beat) use the light page cream, like the script itself, so they read as part of it. */
+:root[data-theme='sepia'] .note-card,
+:root[data-theme='sepia'] .thread-card {
+  background: var(--page);
+}
+:root[data-theme='sepia'] .ol-beat.current {
+  background: var(--page);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+/* Sepia: what's switched on (bold, alignment, list, the current view…) shows as a raised cream
+   button, matching the page, instead of an orange wash. */
+:root[data-theme='sepia'] .tb-btn.on,
+:root[data-theme='sepia'] .seg button.on,
+:root[data-theme='sepia'] .btn.on,
+:root[data-theme='sepia'] .toolbar .menu-trigger[aria-expanded='true'] {
+  background: var(--page);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px var(--border-strong), var(--shadow);
+}
+
+/* Hide the menus (Ctrl/Cmd+Shift+F): only the view bar stays, so the script gets the room. */
+.editor-app.menus-hidden .ed-top,
+.editor-app.menus-hidden .toolbar {
+  display: none;
+}
+.layer-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 2px;
+}
+
+/* ---------------------------------------------------------------- phone layout (editor/Mobile.tsx)
+   Screens up to 700px: slim top bar, one column, tabs at the bottom, a formatting bar on the
+   keyboard, and the outline, notes and settings as sheets. */
+.editor-app.mobile .ed-top {
+  gap: 0;
+  padding: 2px 4px 2px 0;
+  min-height: 52px;
+  border-bottom: 1px solid var(--border);
+}
+.editor-app.mobile .ed-top > .icon-btn,
+.m-top-btn {
+  width: 44px;
+  height: 44px;
+  flex: none;
+}
+.m-top-btn.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.editor-app.mobile .ed-title {
+  font-size: 16px; /* 16px or more: iOS doesn't zoom in when you tap it */
+  font-weight: 600;
+  padding: 1px 4px;
+  width: 100%;
+  text-overflow: ellipsis;
+}
+.editor-app.mobile .ed-sub {
+  padding-left: 5px;
+}
+.editor-app.mobile .ed-top-right {
+  gap: 2px;
+}
+.editor-app.mobile .ed-scroll {
+  padding: 4px 0 96px;
+}
+.editor-app.mobile .page.pageless {
+  padding: 16px 16px 120px;
+}
+
+.m-tabs {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+  padding-bottom: env(safe-area-inset-bottom);
+  position: relative;
+  z-index: 32;
+}
+.m-tab {
+  position: relative;
+  height: 56px;
+  border: 0;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+}
+.m-tab.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+.m-badge {
+  position: absolute;
+  top: 5px;
+  left: calc(50% + 6px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 99px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+
+.m-kbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--surface-2);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -2px 8px rgba(16, 24, 40, 0.06);
+}
+.m-kbar-layers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.m-kbar-layers::-webkit-scrollbar {
+  display: none;
+}
+.m-kbar-layers.idle .m-chip {
+  opacity: 0.55;
+}
+.m-kbar-label {
+  flex: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.m-chip {
+  flex: none;
+  height: 34px;
+  padding: 0 11px;
+  border-radius: 99px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.m-dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border-radius: 99px;
+}
+.m-dot.comment {
+  background: var(--comment-line);
+  border-radius: 2px;
+}
+.m-kbar-fmt {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  padding: 0 2px 2px;
+}
+.m-kbar-fmt button {
+  height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+.m-kbar-fmt button:disabled {
+  opacity: 0.35;
+}
+.m-kbar-fmt button.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.m-kbar-fmt button.labelled {
+  color: var(--accent);
+}
+
+.m-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(17, 19, 24, 0.32);
+}
+/* Notes and comments: a sheet from the bottom, above the tabs. */
+.editor-app.mobile .side-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: auto;
+  bottom: calc(56px + env(safe-area-inset-bottom));
+  width: auto;
+  height: min(72vh, 640px);
+  z-index: 31;
+  border: 0;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -8px 32px rgba(16, 24, 40, 0.18);
+  font-size: 13px;
+}
+.editor-app.mobile .panel-tabs {
+  padding-top: 6px;
+}
+.editor-app.mobile .panel-tabs button[role='tab'] {
+  padding: 12px 12px;
+  font-size: 14px;
+}
+/* The outline fills the screen above the tabs. */
+.editor-app.mobile .outline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom));
+  width: auto;
+  z-index: 31;
+  border: 0;
+  box-shadow: none;
+  font-size: 15px;
+}
+.editor-app.mobile .ol-row {
+  min-height: 44px;
+}
+.editor-app.mobile .ol-grip {
+  display: none;
+}
+
+/* More: layers and document actions. */
+.m-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(56px + env(safe-area-inset-bottom));
+  max-height: calc(100% - 120px);
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -8px 32px rgba(16, 24, 40, 0.18);
+}
+.m-grab {
+  width: 36px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--border-strong);
+  margin: 8px auto 0;
+  flex: none;
+}
+.m-sheet-head {
+  display: flex;
+  align-items: center;
+  padding: 2px 6px 2px 16px;
+}
+.m-sheet-head h2 {
+  flex: 1;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.m-sheet-head .icon-btn {
+  width: 44px;
+  height: 44px;
+}
+.m-sheet-body {
+  overflow: auto;
+  padding: 0 8px 12px;
+}
+.m-sheet-label {
+  margin: 12px 8px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.m-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font-size: 15px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+.m-row.sub {
+  padding-left: 20px;
+}
+.m-row.off {
+  opacity: 0.5;
+}
+.m-row.action:active {
+  background: var(--surface-2);
+}
+.m-row.danger {
+  color: var(--danger);
+}
+.m-row-text {
+  flex: 1;
+  min-width: 0;
+}
+.m-switch {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+/* No hover on a phone: the beat you're in shows its empty fields, so you can fill them in. */
+.editor-app.mobile .layout-document .beat.beat-current .cell.empty {
+  opacity: 0.7;
+}
+.editor-app.mobile .f-chip {
+  height: 28px;
+  padding: 0 12px;
+  font-size: 13px;
+}
+.editor-app.mobile .f-input {
+  font-size: 16px; /* iOS zooms into anything smaller */
+}
+/* The outline's drag and keyboard hints don't apply to touch. */
+.editor-app.mobile .outline-foot .muted {
+  display: none;
+}
+
+/* Opened from the home screen the app runs edge to edge (viewport-fit=cover): keep content clear of
+   the notch and status bar. These are 0 in a normal browser tab. */
+#root {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+}
+.editor-app.mobile .outline {
+  top: env(safe-area-inset-top);
+}

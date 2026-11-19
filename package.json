@@ -1,0 +1,53 @@
+{
+  "name": "sidescript",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "A private, self-hosted collaborative document editor with layered colour annotations.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "build": "node scripts/ensure-deps.js && tsc -p client && vite build",
+    "start": "NODE_ENV=production node server/index.js",
+    "user:add": "node scripts/add-user.js",
+    "backup": "node scripts/backup.js",
+    "compact-history": "node scripts/compact-history.js",
+    "test": "node --test server/test/*.test.js"
+  },
+  "dependencies": {
+    "lib0": "^0.2.119",
+    "ws": "^8.22.1",
+    "y-protocols": "^1.0.7",
+    "yjs": "^13.6.33"
+  },
+  "devDependencies": {
+    "@fontsource-variable/arimo": "^5.3.0",
+    "@fontsource-variable/inconsolata": "^5.3.0",
+    "@fontsource/comic-neue": "^5.3.0",
+    "@fontsource/opendyslexic": "^5.3.0",
+    "@fontsource/tinos": "^5.3.0",
+    "@tiptap/core": "^3.32.2",
+    "@tiptap/extension-collaboration": "^3.32.2",
+    "@tiptap/extension-collaboration-caret": "^3.32.2",
+    "@tiptap/extension-image": "^3.32.2",
+    "@tiptap/extension-text-align": "^3.32.2",
+    "@tiptap/extension-text-style": "^3.32.2",
+    "@tiptap/extensions": "^3.32.2",
+    "@tiptap/pm": "^3.32.2",
+    "@tiptap/react": "^3.32.2",
+    "@tiptap/starter-kit": "^3.32.2",
+    "@tiptap/y-tiptap": "^3.0.12",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.2.1",
+    "lucide-react": "^1.68.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "y-indexeddb": "^9.0.12"
+  }
+}

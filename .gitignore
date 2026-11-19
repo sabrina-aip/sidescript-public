@@ -1,0 +1,16 @@
+# dependencies
+/node_modules
+
+# build output
+/client/dist
+*.tsbuildinfo
+
+# YOUR DOCUMENTS — never commit these
+/data
+/backups
+
+# misc
+.DS_Store
+*.pem
+.env*
+npm-debug.log*
